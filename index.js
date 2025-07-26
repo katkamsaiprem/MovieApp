@@ -1,4 +1,9 @@
+let input = document.querySelector("input");
+
 let parentElement=document.querySelector("main")
+
+
+let filterMovies="";
 
 const URL =
   "https://raw.githubusercontent.com/theapache64/top250/master/top250.json";
@@ -87,9 +92,19 @@ let createMovieCards =(movies)=>{
     }
 }
 
+function headleSearch(){
+   let searchValue =input.value.toLowerCase();
+   filterMovies=searchValue?.length>0?movies.filter(movie=>movie.name.toLowerCase() === searchValue || movie.director[0].name.toLowerCase()==searchValue || movie.actor.some(actor=>actor.name.toLowerCase().includes(searchValue))): movies;
+   console.log(filterMovies);
+   parentElement.innerHTML="";
+   createMovieCards(filterMovies);
+}
+
+input.addEventListener("keyup",headleSearch)
 
 createMovieCards(movies)
 
 //step 1: get the data from the URL
 //step 2: use the func to create a list of movies
 //step 3: create input box to search for movies
+//step 4: filter the movies based on the input value
