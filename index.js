@@ -1,9 +1,13 @@
-let input = document.querySelector("input");
+let querySelector = (query)=>document.querySelector(query);
 
-let parentElement=document.querySelector("main")
+const input = querySelector("input");
+const parentElement=querySelector("main");
+
 
 
 let filterMovies="";
+
+let timerDelay=1000;
 
 const URL =
   "https://raw.githubusercontent.com/theapache64/top250/master/top250.json";
@@ -92,19 +96,37 @@ let createMovieCards =(movies)=>{
     }
 }
 
-function headleSearch(){
-   let searchValue =input.value.toLowerCase();
+function headleSearch(e){
+   let searchValue =e.target.value.toLowerCase();
    filterMovies=searchValue?.length>0?movies.filter(movie=>movie.name.toLowerCase() === searchValue || movie.director[0].name.toLowerCase()==searchValue || movie.actor.some(actor=>actor.name.toLowerCase().includes(searchValue))): movies;
    console.log(filterMovies);
    parentElement.innerHTML="";
    createMovieCards(filterMovies);
 }
 
-input.addEventListener("keyup",headleSearch)
+function debounce(headleSearch, delay) {
+  let timer;
+  
+  return function (...args) { 
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      headleSearch(...args);
+    }, delay);
+  };
+}
+
+input.addEventListener("keyup", debounce(headleSearch, timerDelay));//creates the event object and calls the debounce function with it
+
 
 createMovieCards(movies)
 
-//step 1: get the data from the URL
-//step 2: use the func to create a list of movies
-//step 3: create input box to search for movies
-//step 4: filter the movies based on the input value
+
+/*step 1: get the data from the URL
+step 2: use the func to create a list of movies
+step 3: create input box to search for movies
+step 4: filter the movies based on the input value
+to search for movies by name, director, or actor after the user stops typing for 1 second,we need to debounce the search function
+
+
+
+*/

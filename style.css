@@ -35,12 +35,13 @@ body {
   color: var(--text-color-primary);
 }
 
-.options {
-  display: flex;
-  align-items: center;
+.options{
+  display:flex;
   margin-left: auto;
-  gap: 10px;
+  gap:2rem;
+  
 }
+
 
 .input {
   background-color: transparent;
@@ -54,11 +55,11 @@ body {
 
 .rating-select {
   background-color: transparent;
-  border-radius: 4px;
   padding: 8px;
+  border-radius: 4px;
   font-size: 1.25rem;
-  border: 2px solid var(--card-bg);
-  color: var(--text-color-primary);
+  border: 2px solid var(--search-bg);
+  color:var(--text-color-primary)
 }
 
 .option {
