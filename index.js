@@ -1,13 +1,13 @@
-let querySelector = (query)=>document.querySelector(query);
+let querySelector = (query) => document.querySelector(query);
 
-const input = querySelector("input");
-const parentElement=querySelector("main");
+const input = querySelector(".input");
+const parentElement = querySelector(".main");
+const movieRatings = querySelector(".rating-select");
 
-
-
-let filterMovies="";
-
-let timerDelay=1000;
+let ratingValue = "ALL"; 
+let filterArrayMovies = "";
+let searchValue = "";
+let timerDelay = 1000;
 
 const URL =
   "https://raw.githubusercontent.com/theapache64/top250/master/top250.json";
@@ -18,14 +18,14 @@ const getMovies = async (URL) => {
   } catch (error) {}
 };
 
-const movies= await getMovies(URL);
+const movies = await getMovies(URL);
 console.log(movies);
 
-let createElement=(ElementName)=> document.createElement(ElementName);
+let createElement = (ElementName) => document.createElement(ElementName);
 
-let createMovieCards =(movies)=>{
-    for(let movie of movies){
-        // creating parent container
+let createMovieCards = (movies) => {
+  for (let movie of movies) {
+    // creating parent container
     const cardContainer = createElement("div");
     cardContainer.classList.add("card", "shadow");
 
@@ -77,9 +77,9 @@ let createMovieCards =(movies)=>{
     ratings.appendChild(starIcon);
 
     // ratings
-    const ratingValue = createElement("span");
-    ratingValue.innerText = movie.aggregateRating.ratingValue;
-    ratings.appendChild(ratingValue);
+    const ratingElement = createElement("span");  
+    ratingElement.innerText = movie.aggregateRating.ratingValue;
+    ratings.appendChild(ratingElement);
 
     movieRating.appendChild(ratings);
 
@@ -92,22 +92,43 @@ let createMovieCards =(movies)=>{
     cardContainer.appendChild(cardDetails);
 
     parentElement.appendChild(cardContainer);
-
+  }
+};
+function getFilteredData() {
+   filterArrayMovies =
+    searchValue?.length > 0
+      ? movies.filter(
+          (movie) =>
+            movie.name.toLowerCase().includes(searchValue) ||
+            movie.director[0].name.toLowerCase().includes(searchValue) ||
+            movie.actor.some((actor) =>
+              actor.name.toLowerCase().includes(searchValue)
+            )
+        )
+      : movies;
+      
+    if(ratingValue > 0 && ratingValue !== "ALL"){
+      filterArrayMovies = searchValue?.length > 0 ? filterArrayMovies : movies;
+      filterArrayMovies = filterArrayMovies.filter((movie) =>
+       movie.aggregateRating.ratingValue >= ratingValue
+      );
     }
+  return filterArrayMovies;
 }
 
-function headleSearch(e){
-   let searchValue =e.target.value.toLowerCase();
-   filterMovies=searchValue?.length>0?movies.filter(movie=>movie.name.toLowerCase() === searchValue || movie.director[0].name.toLowerCase()==searchValue || movie.actor.some(actor=>actor.name.toLowerCase().includes(searchValue))): movies;
-   console.log(filterMovies);
-   parentElement.innerHTML="";
-   createMovieCards(filterMovies);
+function headleSearch(e) {
+   searchValue = e.target.value.toLowerCase();
+  let filterBySearch = getFilteredData(); 
+  console.log(filterBySearch);
+  
+  parentElement.innerHTML = "";
+  createMovieCards(filterBySearch);
 }
 
 function debounce(headleSearch, delay) {
   let timer;
-  
-  return function (...args) { 
+
+  return function (...args) {
     clearTimeout(timer);
     timer = setTimeout(() => {
       headleSearch(...args);
@@ -115,11 +136,21 @@ function debounce(headleSearch, delay) {
   };
 }
 
-input.addEventListener("keyup", debounce(headleSearch, timerDelay));//creates the event object and calls the debounce function with it
+function handleRatingFilter(e) {
+  ratingValue = e.target.value;
+  
+  
+  let filterByRating = getFilteredData(); 
+  console.log(filterByRating);
+  
+  parentElement.innerHTML = "";
+  createMovieCards(filterByRating); 
+}
 
+input.addEventListener("keyup", debounce(headleSearch, timerDelay)); //creates the event object and calls the debounce function with it
+movieRatings.addEventListener("change", handleRatingFilter);
 
-createMovieCards(movies)
-
+createMovieCards(movies);
 
 /*step 1: get the data from the URL
 step 2: use the func to create a list of movies

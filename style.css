@@ -27,6 +27,7 @@ body {
   align-items: center;
   position: fixed;
   width: 100vw;
+  z-index: 1000;
   background-color: var(--bg-color);
 }
 
