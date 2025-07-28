@@ -3,9 +3,9 @@ let querySelector = (query) => document.querySelector(query);
 const input = querySelector(".input");
 const parentElement = querySelector(".main");
 const movieRatings = querySelector("#rating-select");
-const genreSelect=querySelector("#genre-select");
+const genreSelect = querySelector("#genre-select");
 
-let ratingValue = "ALL"; 
+let ratingValue = "ALL";
 let filterArrayMovies = "";
 let searchValue = "";
 let timerDelay = 1000;
@@ -20,7 +20,6 @@ const getMovies = async (URL) => {
 };
 
 const movies = await getMovies(URL);
-console.log(movies);
 
 let createElement = (ElementName) => document.createElement(ElementName);
 
@@ -78,7 +77,7 @@ let createMovieCards = (movies) => {
     ratings.appendChild(starIcon);
 
     // ratings
-    const ratingElement = createElement("span");  
+    const ratingElement = createElement("span");
     ratingElement.innerText = movie.aggregateRating.ratingValue;
     ratings.appendChild(ratingElement);
 
@@ -96,7 +95,7 @@ let createMovieCards = (movies) => {
   }
 };
 function getFilteredData() {
-   filterArrayMovies =
+  filterArrayMovies =
     searchValue?.length > 0
       ? movies.filter(
           (movie) =>
@@ -107,21 +106,20 @@ function getFilteredData() {
             )
         )
       : movies;
-      
-    if(ratingValue > 0 && ratingValue !== "ALL"){
-      filterArrayMovies = searchValue?.length > 0 ? filterArrayMovies : movies;
-      filterArrayMovies = filterArrayMovies.filter((movie) =>
-       movie.aggregateRating.ratingValue >= ratingValue
-      );
-    }
+
+  if (ratingValue > 0 && ratingValue !== "ALL") {
+    filterArrayMovies = searchValue?.length > 0 ? filterArrayMovies : movies;
+    filterArrayMovies = filterArrayMovies.filter(
+      (movie) => movie.aggregateRating.ratingValue >= ratingValue
+    );
+  }
   return filterArrayMovies;
 }
 
 function headleSearch(e) {
-   searchValue = e.target.value.toLowerCase();
-  let filterBySearch = getFilteredData(); 
-  console.log(filterBySearch);
-  
+  searchValue = e.target.value.toLowerCase();
+  let filterBySearch = getFilteredData();
+
   parentElement.innerHTML = "";
   createMovieCards(filterBySearch);
 }
@@ -139,28 +137,39 @@ function debounce(headleSearch, delay) {
 
 function handleRatingFilter(e) {
   ratingValue = e.target.value;
-  
-  
-  let filterByRating = getFilteredData(); 
-  console.log(filterByRating);
-  
+  let filterByRating = getFilteredData();
   parentElement.innerHTML = "";
-  createMovieCards(filterByRating); 
+  createMovieCards(filterByRating);
 }
+console.log("movies", movies);
+// returns unique genres
+const uniqueGenres = movies.reduce((acc, cur) => {
+  let uniqueGenre = [];
+  let tempGenre = cur.genre;
+  acc = [...acc, ...tempGenre]; //acc have all the values even if they are repeated,acc contains one arr at a time,
 
-//genre
-let genre = movies.map((movie)=>movie.genre)
-console.log(genre);
+  for (let genre of acc) {
+    if (!uniqueGenre.includes(genre)) {
+      uniqueGenre = [...uniqueGenre, genre]; //if the genre is not present in the uniqueGenre arr then add it to the uniqueGenre arr
+    }
+  }
+  return uniqueGenre;
+}, []); //intial value is an empty array
 
+/* method 2: const finalUniqueGenre=[...new Set(uniqueGenre)]  used to return new arr with unique valuess*/
 
+for(let genre of uniqueGenres){//lets create html for unique genres
+   const options = createElement("option");
+   options.classList.add("option");
+   options.setAttribute("value",genre);
+   options.innerText=genre;
+   genreSelect.appendChild(options);
+}
 
 input.addEventListener("keyup", debounce(headleSearch, timerDelay)); //creates the event object and calls the debounce function with it
 movieRatings.addEventListener("change", handleRatingFilter);
 
 createMovieCards(movies);
-
-
-
 
 /*step 1: get the data from the URL
 step 2: use the func to create a list of movies
@@ -169,5 +178,8 @@ step 4: filter the movies based on the input value
 to search for movies by name, director, or actor after the user stops typing for 1 second,we need to debounce the search function
 //create genre select box ,needs to have only unique genres
 
+logic to get get from db and to take only unique generes
 
+--first arr should have all the gneres even if they are repeated,use reduce to get the unique genres ,by checking if the genre is already present in the new array
+--second arr should have only unique genres
 */
