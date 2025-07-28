@@ -2,7 +2,8 @@ let querySelector = (query) => document.querySelector(query);
 
 const input = querySelector(".input");
 const parentElement = querySelector(".main");
-const movieRatings = querySelector(".rating-select");
+const movieRatings = querySelector("#rating-select");
+const genreSelect=querySelector("#genre-select");
 
 let ratingValue = "ALL"; 
 let filterArrayMovies = "";
@@ -147,17 +148,26 @@ function handleRatingFilter(e) {
   createMovieCards(filterByRating); 
 }
 
+//genre
+let genre = movies.map((movie)=>movie.genre)
+console.log(genre);
+
+
+
 input.addEventListener("keyup", debounce(headleSearch, timerDelay)); //creates the event object and calls the debounce function with it
 movieRatings.addEventListener("change", handleRatingFilter);
 
 createMovieCards(movies);
+
+
+
 
 /*step 1: get the data from the URL
 step 2: use the func to create a list of movies
 step 3: create input box to search for movies
 step 4: filter the movies based on the input value
 to search for movies by name, director, or actor after the user stops typing for 1 second,we need to debounce the search function
-
+//create genre select box ,needs to have only unique genres
 
 
 */

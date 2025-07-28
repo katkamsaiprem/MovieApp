@@ -52,6 +52,7 @@ body {
   color: var(--text-color-primary);
   font-size: 1.25rem;
   width: 25rem;
+  
 }
 
 .rating-select {
@@ -60,7 +61,7 @@ body {
   border-radius: 4px;
   font-size: 1.25rem;
   border: 2px solid var(--search-bg);
-  color:var(--text-color-primary)
+  color:var(--search-bg)
 }
 
 .option {
