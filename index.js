@@ -7,6 +7,7 @@ const genreSelect = querySelector("#genre-select");
 
 let ratingValue = "ALL";
 let filterArrayMovies = "";
+let genre = "";
 let searchValue = "";
 let timerDelay = 1000;
 
@@ -113,6 +114,11 @@ function getFilteredData() {
       (movie) => movie.aggregateRating.ratingValue >= ratingValue
     );
   }
+  if(genre?.length>0){
+     filterArrayMovies=searchValue?.length>0 || ratingValue >= 7 ? filterArrayMovies : movies;
+     filterArrayMovies = filterArrayMovies.filter((movie) => movie.genre.includes(genre));
+     
+  }
   return filterArrayMovies;
 }
 
@@ -158,17 +164,25 @@ const uniqueGenres = movies.reduce((acc, cur) => {
 
 /* method 2: const finalUniqueGenre=[...new Set(uniqueGenre)]  used to return new arr with unique valuess*/
 
-for(let genre of uniqueGenres){//lets create html for unique genres
-   const options = createElement("option");
-   options.classList.add("option");
-   options.setAttribute("value",genre);
-   options.innerText=genre;
-   genreSelect.appendChild(options);
+for (let genre of uniqueGenres) {
+  //lets create html for unique genres
+  const options = createElement("option");
+  options.classList.add("option");
+  options.setAttribute("value", genre);
+  options.innerText = genre;
+  genreSelect.appendChild(options);
+}
+
+function handleGenreFilter(e) {
+  genre = e.target.value;
+  const filterByGenre = getFilteredData();
+  parentElement.innerHTML = ""; 
+  createMovieCards(genre ? filterByGenre:movies); 
 }
 
 input.addEventListener("keyup", debounce(headleSearch, timerDelay)); //creates the event object and calls the debounce function with it
 movieRatings.addEventListener("change", handleRatingFilter);
-
+genreSelect.addEventListener("change", handleGenreFilter);
 createMovieCards(movies);
 
 /*step 1: get the data from the URL
